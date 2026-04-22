@@ -4,57 +4,75 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chuyển Đổi Số Tiền Thành Chữ (Tiếng Việt)</title>
-    <!-- Tải Tailwind CSS để tạo giao diện đẹp và responsive -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       /* Tùy chỉnh font cho tiếng Việt */
       body {
         font-family: "Inter", sans-serif;
-        background-color: #f0f4f8;
         min-height: 100vh;
         display: flex;
         justify-content: center;
         align-items: center;
+        background-color: #0a0a0c;
       }
+      #bg-canvas {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        z-index: 0;
+        pointer-events: none;
+      }
+      #messageBox.bg-green-50  { background-color: rgba(5,150,105,.12)  !important; }
+      #messageBox.text-green-800 { color: #34d399 !important; }
+      #messageBox.border-green-200 { border-color: rgba(5,150,105,.3) !important; }
+      #messageBox.bg-red-50    { background-color: rgba(239,68,68,.12)  !important; }
+      #messageBox.text-red-700 { color: #f87171 !important; }
+      #messageBox.border-red-200 { border-color: rgba(239,68,68,.3) !important; }
     </style>
   </head>
   <body>
+    <canvas id="bg-canvas"></canvas>
+
     <a href="index.html" style="
       position:fixed; top:1rem; left:1rem; z-index:1000;
-      display:flex; align-items:center; gap:.4rem;
-      padding:.45rem 1rem;
-      background:rgba(0,0,0,.35); border:1px solid rgba(0,0,0,.2);
-      border-radius:6px; backdrop-filter:blur(4px);
-      color:#374151; text-decoration:none;
-      font-family:'Inter',sans-serif; font-size:.68rem;
-      font-weight:700; letter-spacing:.08em; text-transform:uppercase;
-      transition:background .15s, color .15s;
-    " onmouseover="this.style.background='rgba(99,102,241,.15)';this.style.color='#4f46e5'"
-       onmouseout="this.style.background='rgba(0,0,0,.35)';this.style.color='#374151'">
+      display:flex; align-items:center; gap:.5rem;
+      padding:.6rem 1.4rem;
+      background:rgba(0,242,255,.08); border:1px solid rgba(0,242,255,.45);
+      border-radius:8px; backdrop-filter:blur(12px);
+      color:#00f2ff; text-decoration:none;
+      font-family:'Space Grotesk',sans-serif; font-size:.75rem;
+      font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+      box-shadow:0 0 14px rgba(0,242,255,.18);
+      transition:background .15s, box-shadow .15s;
+    " onmouseover="this.style.background='rgba(0,242,255,.18)';this.style.boxShadow='0 0 22px rgba(0,242,255,.35)'"
+       onmouseout="this.style.background='rgba(0,242,255,.08)';this.style.boxShadow='0 0 14px rgba(0,242,255,.18)'">
       ← LINK_HUB
     </a>
 
     <div
-      class="w-full max-w-md bg-white shadow-2xl rounded-2xl p-10 m-4 text-center"
+      class="w-full max-w-md rounded-2xl p-10 m-4 text-center"
+      style="position:relative;z-index:1;background:rgba(14,18,26,.96);border:1px solid rgba(0,242,255,.1);backdrop-filter:blur(20px);box-shadow:0 10px 40px rgba(0,0,0,.6),0 0 0 1px rgba(0,242,255,.08)"
     >
-      <h1 class="text-2xl font-bold text-indigo-700 mb-2">
+      <h1 style="font-family:'Space Grotesk',sans-serif" class="text-2xl font-bold text-cyan-400 mb-2">
         💸 Chuyển Tiền Thành Chữ
       </h1>
-      <p class="text-gray-500 text-sm mb-8">
-        Bấm START để tự động Dán số & Copy chữ
+      <p class="text-zinc-400 text-sm mb-8">
+        Bấm START để tự động Dán số &amp; Copy chữ
       </p>
 
-      <!-- Các ô nhập liệu và kết quả được ẩn đi để tối ưu UI -->
       <div class="hidden">
         <input type="text" id="inputNumber" />
         <textarea id="outputWords" readonly></textarea>
       </div>
 
-      <!-- Nút START duy nhất -->
       <div class="flex justify-center mb-6">
         <button
           id="startButton"
-          class="group relative w-48 h-48 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-2xl transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95 flex flex-col items-center justify-center border-8 border-indigo-100"
+          class="group relative w-48 h-48 rounded-full shadow-2xl transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95 flex flex-col items-center justify-center border-8"
+          style="background:#00f2ff;border-color:rgba(0,242,255,.2);color:#002022;box-shadow:0 0 28px rgba(0,242,255,.3)"
+          onmouseover="this.style.background='#00dbe6';this.style.boxShadow='0 0 40px rgba(0,242,255,.5)'"
+          onmouseout="this.style.background='#00f2ff';this.style.boxShadow='0 0 28px rgba(0,242,255,.3)'"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -63,27 +81,19 @@
             viewBox="0 0 24 24"
             stroke="currentColor"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M13 10V3L4 14h7v7l9-11h-7z"
-            />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
           </svg>
-          <span class="text-2xl font-black tracking-widest">START</span>
-          <span class="text-[10px] mt-1 opacity-80 uppercase font-bold"
-            >Paste & Copy</span
-          >
+          <span class="text-2xl font-black tracking-widest" style="font-family:'Space Grotesk',sans-serif">START</span>
+          <span class="text-[10px] mt-1 opacity-70 uppercase font-bold">Paste &amp; Copy</span>
         </button>
       </div>
 
-      <!-- Khu vực hiển thị thông báo và kết quả đã copy -->
       <div
         id="messageBox"
         class="mt-4 p-4 rounded-xl text-sm hidden transition-all duration-500"
       ></div>
 
-      <p class="text-[10px] text-gray-400 mt-8 italic">
+      <p class="text-[10px] text-zinc-500 mt-8 italic">
         * Yêu cầu quyền truy cập Clipboard để hoạt động.
       </p>
     </div>
@@ -264,6 +274,67 @@
       }
 
       startButton.addEventListener("click", handleAction);
+    </script>
+
+    <script>
+    (function () {
+      const canvas = document.getElementById('bg-canvas');
+      const ctx    = canvas.getContext('2d');
+      const MAX_DIST=140, MOUSE_DIST=180, SPEED=0.35, MAX_SPEED=SPEED*5, COLOR='0, 242, 255';
+      let W, H, particles, mouseX=-9999, mouseY=-9999;
+      const ripples=[];
+
+      function resize() { W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+
+      function makeParticle() {
+        const r=Math.random()*1.2+0.8;
+        return { x:Math.random()*W, y:Math.random()*H, vx:(Math.random()-.5)*SPEED*2, vy:(Math.random()-.5)*SPEED*2, r, baseR:r };
+      }
+
+      function init() { resize(); particles=Array.from({length:Math.min(Math.floor(W*H/12000),110)},makeParticle); }
+
+      window.addEventListener('mousemove',(e)=>{mouseX=e.clientX;mouseY=e.clientY;});
+      document.addEventListener('mouseleave',()=>{mouseX=-9999;mouseY=-9999;});
+      window.addEventListener('click',(e)=>{ripples.push({x:e.clientX,y:e.clientY,r:0,alpha:0.75});});
+
+      function frame() {
+        ctx.clearRect(0,0,W,H);
+        const hasMouse=mouseX>-100;
+
+        for (let i=ripples.length-1;i>=0;i--) {
+          const rpl=ripples[i]; rpl.r+=5; rpl.alpha=0.75*(1-rpl.r/240);
+          if(rpl.alpha<=0){ripples.splice(i,1);continue;}
+          ctx.beginPath();ctx.arc(rpl.x,rpl.y,rpl.r,0,Math.PI*2);
+          ctx.strokeStyle=`rgba(${COLOR},${rpl.alpha})`;ctx.lineWidth=1.5;ctx.stroke();
+          for(const p of particles){const dx=p.x-rpl.x,dy=p.y-rpl.y,dist=Math.sqrt(dx*dx+dy*dy);if(Math.abs(dist-rpl.r)<35){const f=(1-Math.abs(dist-rpl.r)/35)*1.8;p.vx+=(dx/(dist||1))*f*0.35;p.vy+=(dy/(dist||1))*f*0.35;}}
+        }
+
+        if(hasMouse){for(const p of particles){const dx=p.x-mouseX,dy=p.y-mouseY,dist=Math.sqrt(dx*dx+dy*dy);if(dist<MOUSE_DIST){const a=(1-dist/MOUSE_DIST)*0.55;const g=ctx.createLinearGradient(mouseX,mouseY,p.x,p.y);g.addColorStop(0,`rgba(${COLOR},${a})`);g.addColorStop(1,`rgba(${COLOR},0)`);ctx.beginPath();ctx.moveTo(mouseX,mouseY);ctx.lineTo(p.x,p.y);ctx.strokeStyle=g;ctx.lineWidth=1;ctx.stroke();}}}
+
+        for(let i=0;i<particles.length;i++){
+          const p=particles[i];
+          if(hasMouse){const dx=p.x-mouseX,dy=p.y-mouseY,dist=Math.sqrt(dx*dx+dy*dy);if(dist<MOUSE_DIST&&dist>0){const f=(1-dist/MOUSE_DIST)*0.06;p.vx+=(dx/dist)*f*MOUSE_DIST;p.vy+=(dy/dist)*f*MOUSE_DIST;}}
+          const spd=Math.sqrt(p.vx*p.vx+p.vy*p.vy);
+          if(spd>MAX_SPEED){p.vx=p.vx/spd*MAX_SPEED;p.vy=p.vy/spd*MAX_SPEED;}
+          p.vx*=0.992;p.vy*=0.992;
+          if(spd<SPEED*0.4){p.vx+=(Math.random()-.5)*0.04;p.vy+=(Math.random()-.5)*0.04;}
+          p.x+=p.vx;p.y+=p.vy;
+          if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;
+          const mdx=p.x-mouseX,mdy=p.y-mouseY,mdist=Math.sqrt(mdx*mdx+mdy*mdy);
+          const nr=hasMouse&&mdist<MOUSE_DIST?1-mdist/MOUSE_DIST:0;
+          ctx.beginPath();ctx.arc(p.x,p.y,p.baseR+nr*2,0,Math.PI*2);ctx.fillStyle=`rgba(${COLOR},${0.5+nr*0.45})`;ctx.fill();
+          if(nr>0.55){ctx.beginPath();ctx.arc(p.x,p.y,p.baseR+nr*2+4,0,Math.PI*2);ctx.fillStyle=`rgba(${COLOR},${nr*0.12})`;ctx.fill();}
+          for(let j=i+1;j<particles.length;j++){const q=particles[j],dx=p.x-q.x,dy=p.y-q.y,dist=Math.sqrt(dx*dx+dy*dy);if(dist<MAX_DIST){ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);ctx.strokeStyle=`rgba(${COLOR},${(1-dist/MAX_DIST)*0.25})`;ctx.lineWidth=0.6;ctx.stroke();}}
+        }
+
+        if(hasMouse){ctx.beginPath();ctx.arc(mouseX,mouseY,3,0,Math.PI*2);ctx.fillStyle=`rgba(${COLOR},0.85)`;ctx.fill();ctx.beginPath();ctx.arc(mouseX,mouseY,10,0,Math.PI*2);ctx.fillStyle=`rgba(${COLOR},0.1)`;ctx.fill();}
+
+        requestAnimationFrame(frame);
+      }
+
+      window.addEventListener('resize',resize);
+      init(); frame();
+    })();
     </script>
   </body>
 </html>

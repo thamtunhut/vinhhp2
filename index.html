@@ -54,10 +54,6 @@ tailwind.config = {
 <style>
 body {
   background-color: #0a0a0c;
-  background-image:
-    linear-gradient(rgba(0,242,255,.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,242,255,.03) 1px, transparent 1px);
-  background-size: 32px 32px;
 }
 .glass-card {
   backdrop-filter: blur(16px);
@@ -65,10 +61,19 @@ body {
   border: 1px solid rgba(255,255,255,.1);
 }
 .neon-glow { box-shadow: 0 0 15px rgba(0,219,231,.2); }
+#bg-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
 </style>
 </head>
 
 <body class="font-body-base text-on-background">
+
+<canvas id="bg-canvas"></canvas>
 
   <!-- Top bar -->
   <header class="fixed top-0 w-full z-50 flex items-center h-16 px-6
@@ -82,7 +87,7 @@ body {
   <!-- Sidebar (desktop) -->
   <aside class="fixed left-0 top-0 h-full w-64 flex flex-col pt-20
                 bg-[#0a0a0c]/80 backdrop-blur-lg border-r border-white/10
-                z-40 hidden md:flex">
+                z-40 hidden md:flex" style="z-index:40">
     <div class="px-6 mb-8">
       <div class="flex items-center gap-3">
         <div class="w-8 h-8 rounded bg-primary-container/20 flex items-center justify-center border border-primary-container/30">
@@ -135,7 +140,7 @@ body {
   </aside>
 
   <!-- Main content -->
-  <main class="md:pl-64 pt-24 pb-20 min-h-screen">
+  <main class="md:pl-64 pt-24 pb-20 min-h-screen" style="position:relative;z-index:1">
     <div class="max-w-7xl mx-auto px-6 lg:px-12">
 
       <div class="mb-12 border-l-2 border-primary-container pl-6 py-2">
@@ -264,6 +269,139 @@ body {
       <span class="text-[10px] font-status-label uppercase">VND</span>
     </a>
   </nav>
+
+<script>
+(function () {
+  const canvas = document.getElementById('bg-canvas');
+  const ctx    = canvas.getContext('2d');
+
+  const MAX_DIST   = 140;
+  const MOUSE_DIST = 180;
+  const SPEED      = 0.35;
+  const MAX_SPEED  = SPEED * 5;
+  const COLOR      = '0, 242, 255';
+
+  let W, H, particles;
+  let mouseX = -9999, mouseY = -9999;
+  const ripples = [];
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function makeParticle() {
+    const r = Math.random() * 1.2 + 0.8;
+    return { x: Math.random()*W, y: Math.random()*H,
+             vx: (Math.random()-.5)*SPEED*2, vy: (Math.random()-.5)*SPEED*2,
+             r, baseR: r };
+  }
+
+  function init() {
+    resize();
+    particles = Array.from({ length: Math.min(Math.floor(W*H/12000), 110) }, makeParticle);
+  }
+
+  window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+  document.addEventListener('mouseleave', () => { mouseX = -9999; mouseY = -9999; });
+  window.addEventListener('click', (e) => { ripples.push({ x: e.clientX, y: e.clientY, r: 0, alpha: 0.75 }); });
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    const hasMouse = mouseX > -100;
+
+    /* ── Ripples ── */
+    for (let i = ripples.length - 1; i >= 0; i--) {
+      const rpl = ripples[i];
+      rpl.r += 5; rpl.alpha = 0.75 * (1 - rpl.r / 240);
+      if (rpl.alpha <= 0) { ripples.splice(i, 1); continue; }
+      ctx.beginPath(); ctx.arc(rpl.x, rpl.y, rpl.r, 0, Math.PI*2);
+      ctx.strokeStyle = `rgba(${COLOR},${rpl.alpha})`; ctx.lineWidth = 1.5; ctx.stroke();
+      for (const p of particles) {
+        const dx = p.x-rpl.x, dy = p.y-rpl.y;
+        const dist = Math.sqrt(dx*dx+dy*dy);
+        if (Math.abs(dist - rpl.r) < 35) {
+          const f = (1 - Math.abs(dist-rpl.r)/35) * 1.8;
+          const nx = dx/(dist||1), ny = dy/(dist||1);
+          p.vx += nx*f*0.35; p.vy += ny*f*0.35;
+        }
+      }
+    }
+
+    /* ── Mouse → particle gradient lines ── */
+    if (hasMouse) {
+      for (const p of particles) {
+        const dx = p.x-mouseX, dy = p.y-mouseY;
+        const dist = Math.sqrt(dx*dx+dy*dy);
+        if (dist < MOUSE_DIST) {
+          const a = (1-dist/MOUSE_DIST)*0.55;
+          const g = ctx.createLinearGradient(mouseX, mouseY, p.x, p.y);
+          g.addColorStop(0, `rgba(${COLOR},${a})`); g.addColorStop(1, `rgba(${COLOR},0)`);
+          ctx.beginPath(); ctx.moveTo(mouseX, mouseY); ctx.lineTo(p.x, p.y);
+          ctx.strokeStyle = g; ctx.lineWidth = 1; ctx.stroke();
+        }
+      }
+    }
+
+    /* ── Particles ── */
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+
+      if (hasMouse) {
+        const dx = p.x-mouseX, dy = p.y-mouseY;
+        const dist = Math.sqrt(dx*dx+dy*dy);
+        if (dist < MOUSE_DIST && dist > 0) {
+          const f = (1-dist/MOUSE_DIST)*0.06;
+          p.vx += (dx/dist)*f*MOUSE_DIST; p.vy += (dy/dist)*f*MOUSE_DIST;
+        }
+      }
+
+      const spd = Math.sqrt(p.vx*p.vx+p.vy*p.vy);
+      if (spd > MAX_SPEED) { p.vx = p.vx/spd*MAX_SPEED; p.vy = p.vy/spd*MAX_SPEED; }
+      p.vx *= 0.992; p.vy *= 0.992;
+      if (spd < SPEED*0.4) { p.vx += (Math.random()-.5)*0.04; p.vy += (Math.random()-.5)*0.04; }
+
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0 || p.x > W) p.vx *= -1;
+      if (p.y < 0 || p.y > H) p.vy *= -1;
+
+      const mdx = p.x-mouseX, mdy = p.y-mouseY;
+      const mdist = Math.sqrt(mdx*mdx+mdy*mdy);
+      const nr = hasMouse && mdist < MOUSE_DIST ? 1-mdist/MOUSE_DIST : 0;
+
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.baseR+nr*2, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(${COLOR},${0.5+nr*0.45})`; ctx.fill();
+
+      if (nr > 0.55) {
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.baseR+nr*2+4, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(${COLOR},${nr*0.12})`; ctx.fill();
+      }
+
+      for (let j = i+1; j < particles.length; j++) {
+        const q = particles[j], dx = p.x-q.x, dy = p.y-q.y;
+        const dist = Math.sqrt(dx*dx+dy*dy);
+        if (dist < MAX_DIST) {
+          ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
+          ctx.strokeStyle = `rgba(${COLOR},${(1-dist/MAX_DIST)*0.25})`; ctx.lineWidth=0.6; ctx.stroke();
+        }
+      }
+    }
+
+    /* ── Cursor glow ── */
+    if (hasMouse) {
+      ctx.beginPath(); ctx.arc(mouseX, mouseY, 3, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(${COLOR},0.85)`; ctx.fill();
+      ctx.beginPath(); ctx.arc(mouseX, mouseY, 10, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(${COLOR},0.1)`; ctx.fill();
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  window.addEventListener('resize', resize);
+  init(); frame();
+})();
+</script>
 
 </body>
 </html>
