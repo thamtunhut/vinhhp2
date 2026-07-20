@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chuyển Đổi Số Tiền Thành Chữ (Tiếng Việt)</title>
+    <title>Chuyển Đổi Số Tiền Thành Chữ</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -29,6 +29,78 @@
       #messageBox.bg-red-50    { background-color: rgba(239,68,68,.12)  !important; }
       #messageBox.text-red-700 { color: #f87171 !important; }
       #messageBox.border-red-200 { border-color: rgba(239,68,68,.3) !important; }
+
+      .mode-toggle {
+        position: relative;
+        display: inline-flex;
+        background: rgba(255,255,255,.04);
+        border: 1px solid rgba(0,242,255,.18);
+        border-radius: 999px;
+        padding: 4px;
+      }
+      .mode-toggle-slider {
+        position: absolute;
+        top: 4px; left: 4px;
+        width: calc(50% - 4px);
+        height: calc(100% - 8px);
+        background: #00f2ff;
+        border-radius: 999px;
+        box-shadow: 0 0 14px rgba(0,242,255,.4);
+        transition: transform .25s cubic-bezier(.4,0,.2,1);
+      }
+      .mode-toggle[data-active="usd"] .mode-toggle-slider { transform: translateX(100%); }
+      .mode-toggle-btn {
+        position: relative;
+        z-index: 1;
+        border: none;
+        background: transparent;
+        color: #849495;
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 700;
+        font-size: .72rem;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        padding: .55rem 1.6rem;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: color .25s;
+      }
+      .mode-toggle-btn.active { color: #002022; }
+
+      .format-toggle {
+        position: relative;
+        display: inline-flex;
+        background: rgba(255,255,255,.04);
+        border: 1px solid rgba(0,242,255,.14);
+        border-radius: 999px;
+        padding: 3px;
+      }
+      .format-toggle-slider {
+        position: absolute;
+        top: 3px; left: 3px;
+        width: calc(50% - 3px);
+        height: calc(100% - 6px);
+        background: #00f2ff;
+        border-radius: 999px;
+        box-shadow: 0 0 10px rgba(0,242,255,.35);
+        transition: transform .25s cubic-bezier(.4,0,.2,1);
+      }
+      .format-toggle[data-active="eu"] .format-toggle-slider { transform: translateX(100%); }
+      .format-toggle-btn {
+        position: relative;
+        z-index: 1;
+        border: none;
+        background: transparent;
+        color: #849495;
+        font-family: monospace;
+        font-size: .68rem;
+        font-weight: 600;
+        padding: .4rem 1rem;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: color .25s;
+      }
+      .format-toggle-btn.active { color: #002022; }
     </style>
   </head>
   <body>
@@ -60,6 +132,25 @@
       <p class="text-zinc-400 text-sm mb-8">
         Bấm START để tự động Dán số &amp; Copy chữ
       </p>
+
+      <div class="flex justify-center mb-6">
+        <div class="mode-toggle" id="modeToggle" data-active="vnd">
+          <div class="mode-toggle-slider"></div>
+          <button type="button" class="mode-toggle-btn active" data-mode="vnd">VND</button>
+          <button type="button" class="mode-toggle-btn" data-mode="usd">USD</button>
+        </div>
+      </div>
+
+      <div id="usdFormatSection" class="hidden">
+        <p class="text-[10px] text-zinc-500 mb-2">Bạn định dạng số theo dạng nào?</p>
+        <div class="flex justify-center mb-6">
+          <div id="usdFormatToggle" class="format-toggle" data-active="us">
+            <div class="format-toggle-slider"></div>
+            <button type="button" class="format-toggle-btn active" data-format="us">1,234.56</button>
+            <button type="button" class="format-toggle-btn" data-format="eu">1.234,56</button>
+          </div>
+        </div>
+      </div>
 
       <div class="hidden">
         <input type="text" id="inputNumber" />
@@ -105,6 +196,34 @@
       const outputTextarea = document.getElementById("outputWords");
       const startButton = document.getElementById("startButton");
       const messageBox = document.getElementById("messageBox");
+      const modeToggle = document.getElementById("modeToggle");
+      const usdFormatSection = document.getElementById("usdFormatSection");
+      const usdFormatToggle = document.getElementById("usdFormatToggle");
+      let currentMode = "vnd";
+      let usdFormat = "us";
+
+      modeToggle.querySelectorAll(".mode-toggle-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          currentMode = btn.dataset.mode;
+          modeToggle.dataset.active = currentMode;
+          modeToggle
+            .querySelectorAll(".mode-toggle-btn")
+            .forEach((b) => b.classList.toggle("active", b === btn));
+          usdFormatSection.classList.toggle("hidden", currentMode !== "usd");
+          messageBox.classList.add("hidden");
+        });
+      });
+
+      usdFormatToggle.querySelectorAll(".format-toggle-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          usdFormat = btn.dataset.format;
+          usdFormatToggle.dataset.active = usdFormat;
+          usdFormatToggle
+            .querySelectorAll(".format-toggle-btn")
+            .forEach((b) => b.classList.toggle("active", b === btn));
+          messageBox.classList.add("hidden");
+        });
+      });
 
       const unit = ["", "nghìn", "triệu", "tỷ", "nghìn tỷ", "triệu tỷ"];
       const numText = [
@@ -234,6 +353,85 @@
         return (words + " đồng").replace(/\s+/g, " ");
       }
 
+      const onesEn = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
+        "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen",
+        "Eighteen", "Nineteen"];
+      const tensEn = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+      const scaleEn = ["", "Thousand", "Million", "Billion", "Trillion", "Quadrillion"];
+
+      function twoDigitWordsEn(n, hyphen) {
+        if (n < 20) return onesEn[n];
+        const t = Math.floor(n / 10), o = n % 10;
+        if (o === 0) return tensEn[t];
+        return tensEn[t] + (hyphen ? "-" : " ") + onesEn[o];
+      }
+
+      function blockWordsEn(n, useAnd, hyphen) {
+        const h = Math.floor(n / 100);
+        const r = n % 100;
+        const parts = [];
+        if (h > 0) parts.push(onesEn[h] + " Hundred");
+        if (r > 0) {
+          if (h > 0 && useAnd) parts.push("And");
+          parts.push(twoDigitWordsEn(r, hyphen));
+        }
+        return parts.join(" ");
+      }
+
+      function integerWordsEn(bigNum, useAnd, hyphen) {
+        if (bigNum === 0n) return "Zero";
+        const blocks = [];
+        let n = bigNum;
+        while (n > 0n) {
+          blocks.push(Number(n % 1000n));
+          n /= 1000n;
+        }
+        const parts = [];
+        for (let i = blocks.length - 1; i >= 0; i--) {
+          if (blocks[i] === 0) continue;
+          const words = blockWordsEn(blocks[i], useAnd, hyphen);
+          parts.push(scaleEn[i] ? `${words} ${scaleEn[i]}` : words);
+        }
+        return parts.join(" ");
+      }
+
+      // Title Case toàn bộ. Không lẻ cent: có "And" trong từng khối, kết thúc "US Dollar(s)".
+      // Có lẻ cent: không "and" trong khối, hyphen cụm chục-đơn vị, vd: "...Dollars And Eighty-Eight Cents"
+      function convertNumberToUSDWords(raw) {
+        // "eu": dấu chấm = phân cách nghìn, dấu phẩy = phân cách thập phân (vd: 1.234,56)
+        const normalized =
+          usdFormat === "eu" ? raw.replace(/\./g, "").replace(/,/g, ".") : raw;
+        const cleaned = normalized.replace(/[^0-9.]/g, "");
+        if (cleaned === "") return null;
+
+        const dotIndex = cleaned.indexOf(".");
+        let intPart, fracPart;
+        if (dotIndex === -1) {
+          intPart = cleaned;
+          fracPart = "";
+        } else {
+          intPart = cleaned.slice(0, dotIndex);
+          fracPart = cleaned.slice(dotIndex + 1).replace(/\./g, "");
+        }
+        intPart = intPart.replace(/^0+(?=\d)/, "") || "0";
+        if (intPart.length > 18) return null;
+
+        const dollars = BigInt(intPart);
+        const cents = parseInt((fracPart + "00").slice(0, 2), 10);
+
+        if (cents === 0) {
+          const amountWords = integerWordsEn(dollars, true, false);
+          const unit = dollars === 1n ? "US Dollar" : "US Dollars";
+          return `${amountWords} ${unit}`;
+        }
+
+        const amountWords = integerWordsEn(dollars, false, true);
+        const dollarUnit = dollars === 1n ? "Dollar" : "Dollars";
+        const centsWords = twoDigitWordsEn(cents, true);
+        const centUnit = cents === 1 ? "Cent" : "Cents";
+        return `${amountWords} ${dollarUnit} And ${centsWords} ${centUnit}`;
+      }
+
       async function handleAction() {
         let pastedText = "";
         // 1. Dán
@@ -250,10 +448,13 @@
         }
 
         // 2. Chuyển đổi
-        const resultText = convertNumberToVietnameseWords(pastedText);
+        const resultText =
+          currentMode === "usd"
+            ? convertNumberToUSDWords(pastedText)
+            : convertNumberToVietnameseWords(pastedText);
 
-        if (resultText === "Số quá lớn!") {
-          showMessage("LỖI:", "Số quá lớn, không hỗ trợ chuyển đổi.", true);
+        if (resultText === "Số quá lớn!" || resultText === null) {
+          showMessage("LỖI:", "Số quá lớn hoặc không hợp lệ, không hỗ trợ chuyển đổi.", true);
           return;
         }
 
