@@ -68,14 +68,17 @@ vnd.html → <a href="index.html"> ← LINK_HUB
 - Back button: `<a href="index.html">` fixed top-left, cyan styled
 - START button: cyan `#00f2ff`, text `#002022`
 - `<canvas id="bg-canvas">` + particle network JS
-- **Mode toggle** `#modeToggle` (`.mode-toggle-btn`, mặc định `vnd`): chuyển đổi giữa đọc số VND (tiếng Việt) và USD (tiếng Anh), biến `currentMode` quyết định `handleAction()` gọi hàm convert nào
+- **Mode toggle** `#modeToggle` (`.mode-toggle-btn`, mặc định `vnd`): chuyển đổi giữa đọc số VND và USD, biến `currentMode` quyết định `handleAction()` gọi hàm convert nào
+- **VND language toggle** `#vndLangSection` / `#vndLangToggle` (`.format-toggle-btn`): chỉ hiện khi `currentMode === "vnd"` (mặc định hiện sẵn vì VND là mode mặc định), cho chọn đọc số VND bằng tiếng Việt (`vi`, mặc định) hay tiếng Anh (`en`), biến `vndLang` dùng trong `handleAction()` để chọn `convertNumberToVietnameseWords()` hay `convertNumberToVNDEnglishWords()`
 - **USD format toggle** `#usdFormatSection` / `#usdFormatToggle` (`.format-toggle-btn`): chỉ hiện khi `currentMode === "usd"`, cho chọn kiểu nhập số — `1,234.56` (US, mặc định, phẩy=nghìn/chấm=thập phân) hoặc `1.234,56` (EU, chấm=nghìn/phẩy=thập phân), biến `usdFormat` dùng trong `convertNumberToUSDWords()` để chuẩn hoá input trước khi parse
-- Logic VND: BigInt arithmetic — **không đổi sang Number** (mất precision > 15 chữ số)
+- Logic VND: BigInt arithmetic — **không đổi sang Number** (mất precision > 15 chữ số); parse bằng `replace(/[^0-9]/g, "")` nên `1,234,567` và `1.234.567` được hiểu giống nhau (cả dấu phẩy lẫn dấu chấm đều bị strip)
+- Các hàm dựng số tiếng Anh dùng chung (`onesEn`, `tensEn`, `scaleEn`, `twoDigitWordsEn()`, `blockWordsEn()`, `integerWordsEn()`) — tham số `andMode` của `blockWordsEn()`/`integerWordsEn()` có 3 giá trị: `"always"` (luôn chèn "And" sau hàng trăm), `"never"` (không bao giờ), `"teens"` (chỉ chèn khi phần còn lại là số 1 từ 0-19, vd "five hundred and fifteen" nhưng "five hundred fifty-five" thì không)
 - Logic USD (`convertNumberToUSDWords()`): tách phần dollars (BigInt) + cents (0-99) từ input đã chuẩn hoá; **Title Case toàn bộ** trong mọi trường hợp:
-  - Cent = 0: có từ "And" nối hàng trăm với hàng chục/đơn vị trong từng khối 3 chữ số, kết thúc `US Dollar`/`US Dollars` — vd `Twelve Thousand Five Hundred And Eleven US Dollars`
-  - Cent ≠ 0: không dùng "And" trong khối số, cụm chục-đơn vị nối bằng dấu gạch ngang, kết thúc `Dollar(s) And <cents> Cent(s)` — vd `Two Thousand Three Hundred Thirteen Dollars And Eighty-Eight Cents`
+  - Cent = 0: `andMode="always"`, kết thúc `US Dollar`/`US Dollars` — vd `Twelve Thousand Five Hundred And Eleven US Dollars`
+  - Cent ≠ 0: `andMode="never"`, cụm chục-đơn vị nối bằng dấu gạch ngang, kết thúc `Dollar(s) And <cents> Cent(s)` — vd `Two Thousand Three Hundred Thirteen Dollars And Eighty-Eight Cents`
   - Số ít khi bằng 1: `One US Dollar`, `One Dollar`, `One Cent`
   - Giới hạn phần nguyên 18 chữ số, giống VND (`intPart.length > 18` → lỗi)
+- Logic VND-tiếng-Anh (`convertNumberToVNDEnglishWords()`): dùng `andMode="teens"`, sentence case (chỉ hoa chữ đầu câu, phần còn lại lowercase), kết thúc cố định `Vietnam Dong` (giữ hoa vì là danh từ riêng) — vd `Twenty-five million five hundred and fifteen thousand Vietnam Dong`; cùng giới hạn 18 chữ số
 - MessageBox: JS thêm Tailwind classes `bg-green-50`/`bg-red-50` — được CSS override sang dark version
 
 ## Particle Network Background (dùng chung cả 3 file)
@@ -135,7 +138,7 @@ git push
 **Đang hoạt động:**
 - ✅ Hub dashboard — responsive, sidebar desktop + mobile nav, particle background
 - ✅ QR Generator — dark theme, tạo QR, overlay logo (toggle + color picker), download PNG
-- ✅ Currency to Words — dark theme, toggle VND/USD (mặc định VND), USD hỗ trợ 2 định dạng số (`1,234.56` / `1.234,56`), paste số → convert → copy chữ
+- ✅ Currency to Words — dark theme, toggle VND/USD (mặc định VND), VND hỗ trợ đọc tiếng Việt/tiếng Anh, USD hỗ trợ 2 định dạng số (`1,234.56` / `1.234,56`), paste số → convert → copy chữ
 - ✅ Particle network — mouse repel, gradient lines, click ripple, cursor glow (cả 3 trang)
 - ✅ Custom domain — `https://vinhhp2.site/`
 - ✅ Open Graph — thumbnail hiển thị khi share link trên Zalo/mạng xã hội
