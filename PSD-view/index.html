@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101622">
+  <title>PSD View — Xem file Photoshop</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="enhancements.css">
+  <style>[hidden]{display:none!important}</style>
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">Ps</span><div><strong>PSD View</strong></div></div>
+      <div class="filebar" id="filebar" hidden>
+        <div class="file-title"><strong id="file-name"></strong><span id="file-status" role="status"></span></div>
+        <div class="file-facts" id="file-facts"></div>
+      </div>
+      <div class="top-actions"><button class="primary" id="open-button" type="button">Mở file PSD</button><input id="file-input" type="file" accept=".psd,.psb" hidden></div>
+    </header>
+
+    <main class="workspace">
+      <aside class="panel layers-panel" id="layers-panel" aria-label="Danh sách layer">
+        <div class="panel-head"><h2>Layers <span id="layer-count"></span></h2><span class="hint">Chọn để xem chi tiết</span></div>
+        <div class="search-wrap"><input id="layer-search" type="search" placeholder="Tìm layer…" aria-label="Tìm layer" disabled></div>
+        <div class="layer-list" id="layer-list"><p class="muted panel-placeholder">Mở file để xem danh sách layer.</p></div>
+      </aside>
+
+      <section class="viewer" aria-label="Vùng xem ảnh">
+        <div class="viewer-toolbar">
+          <div class="viewer-left-tools">
+            <button id="toggle-layers" class="panel-toggle" type="button" aria-label="Thu gọn bảng Layers" aria-controls="layers-panel" aria-expanded="true" title="Ẩn/hiện bảng Layers"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/><path class="panel-fill" d="M4 5h4v14H4z"/></svg></button>
+            <div class="segmented" role="group" aria-label="Chế độ xem"><button id="view-composite" class="active" type="button" disabled>Ảnh tổng</button><button id="view-layer" type="button" disabled>Layer riêng</button></div>
+          </div>
+          <div class="viewer-right-tools">
+            <div class="zoom-tools"><button id="zoom-out" type="button" aria-label="Thu nhỏ" title="Thu nhỏ (Ctrl + -)" disabled>−</button><label class="zoom-field"><input id="zoom-input" type="text" inputmode="decimal" aria-label="Tỷ lệ zoom phần trăm" value="—" disabled><span>%</span></label><button id="zoom-in" type="button" aria-label="Phóng to" title="Phóng to (Ctrl + +)" disabled>+</button><button id="zoom-fit" type="button" title="Vừa khung (Ctrl + 0)" disabled>Vừa khung</button></div>
+            <button id="toggle-details" class="panel-toggle" type="button" aria-label="Thu gọn bảng Chi tiết" aria-controls="inspector-panel" aria-expanded="true" title="Ẩn/hiện bảng Chi tiết"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/><path class="panel-fill" d="M16 5h4v14h-4z"/></svg></button>
+          </div>
+        </div>
+        <div class="stage" id="stage">
+          <div class="empty-state" id="empty-state"><div class="empty-icon">Ps</div><h1>Xem file PSD ngay trong trình duyệt</h1><p>Kéo thả file vào đây hoặc chọn file trên máy. Xem ảnh gộp, cây layer, kích thước, hệ màu và font.</p><button class="primary" id="empty-open" type="button">Chọn file PSD</button><small>Không cần Photoshop · Không tải file lên máy chủ</small></div>
+          <div class="canvas-outer" id="canvas-outer" hidden><div class="artboard" id="artboard"></div></div>
+          <div class="stage-message" id="stage-message" hidden></div>
+        </div>
+        <div class="viewer-bottom"><span id="preview-label">Chưa mở file</span><span>Cuộn chuột để zoom · Kéo ảnh để di chuyển</span><span>Chỉ xem · Không thay đổi file gốc</span></div>
+      </section>
+
+      <aside class="panel inspector" id="inspector-panel" aria-label="Thông tin tài liệu và layer">
+        <div class="inspector-tabs" role="tablist" aria-label="Thông tin"><button id="tab-details" class="active" role="tab" aria-selected="true" type="button">Chi tiết</button><button id="tab-fonts" role="tab" aria-selected="false" type="button">Fonts <span id="font-count"></span></button></div>
+        <div id="details-panel" role="tabpanel" class="inspector-content"><p class="muted panel-placeholder">Chọn file để xem thông tin.</p></div>
+        <div id="fonts-panel" role="tabpanel" class="inspector-content" hidden></div>
+      </aside>
+    </main>
+    <div class="drop-overlay" id="drop-overlay" hidden>Thả file PSD để mở</div>
+  </div>
+  <script src="ag-psd.bundle.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
