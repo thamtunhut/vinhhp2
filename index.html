@@ -153,112 +153,72 @@ body {
   <main class="md:pl-64 pt-24 pb-20 min-h-screen" style="position:relative;z-index:1">
     <div class="max-w-7xl mx-auto px-6 lg:px-12">
 
-      <div class="mb-12 border-l-2 border-primary-container pl-6 py-2">
-        <h1 class="font-display-xl text-display-xl text-white mb-2 uppercase tracking-tighter">
-          Deployed Tools
-        </h1>
-        <p class="text-zinc-500 font-body-base max-w-2xl">
-          Access high-performance developer utilities directly from your command hub.
-          Low-latency, zero-cost, browser-native applications.
-        </p>
-      </div>
-
       <!-- Tool cards -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
 
         <!-- Card: QR Generator -->
-        <div class="glass-card p-8 group hover:border-primary-container/30
-                    transition-all duration-300 flex flex-col h-full relative overflow-hidden">
-          <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-            <span class="material-symbols-outlined text-6xl">qr_code_2</span>
+        <div class="glass-card p-5 group hover:border-primary-container/30
+                    transition-all duration-300 flex flex-col h-full">
+          <div class="p-2 w-fit bg-primary-container/10 border border-primary-container/20 rounded-lg mb-3">
+            <span class="material-symbols-outlined text-primary-container text-lg">qr_code_2</span>
           </div>
-          <div class="flex items-start justify-between mb-6">
-            <div class="p-3 bg-primary-container/10 border border-primary-container/20 rounded-lg">
-              <span class="material-symbols-outlined text-primary-container">qr_code_2</span>
-            </div>
-          </div>
-          <h3 class="font-headline-md text-headline-md text-white mb-4
+          <h3 class="text-white text-sm font-bold font-['Space_Grotesk'] mb-1
                      group-hover:text-primary-container transition-colors">
             QR Code Generator
           </h3>
-          <p class="text-zinc-400 mb-8 flex-grow">
-            Tạo mã QR chất lượng cao — miễn phí, ngay trên trình duyệt
+          <p class="text-zinc-500 text-xs mb-4 flex-grow">
+            Tạo mã QR chất lượng cao
           </p>
-          <div class="flex flex-wrap gap-2 mb-8">
-            <span class="px-2 py-1 bg-white/5 border border-white/10 rounded text-[10px] font-code-sm text-zinc-400">HTML</span>
-            <span class="px-2 py-1 bg-white/5 border border-white/10 rounded text-[10px] font-code-sm text-zinc-400">JAVASCRIPT</span>
-            <span class="px-2 py-1 bg-white/5 border border-white/10 rounded text-[10px] font-code-sm text-zinc-400">QRCODE.JS</span>
-          </div>
           <a href="QR.html"
-             class="w-full py-4 bg-primary-container text-on-primary-fixed
-                    font-status-label text-status-label uppercase tracking-widest
+             class="w-full py-2 bg-primary-container text-on-primary-fixed
+                    font-status-label text-[10px] uppercase tracking-widest
                     hover:brightness-110 active:scale-[0.98] transition-all
-                    flex items-center justify-center gap-2 no-underline">
-            OPEN <span class="material-symbols-outlined text-sm">arrow_outward</span>
+                    flex items-center justify-center gap-1 no-underline">
+            OPEN <span class="material-symbols-outlined text-xs">arrow_outward</span>
           </a>
         </div>
 
         <!-- Card: VND Converter -->
-        <div class="glass-card p-8 group hover:border-primary-container/30
-                    transition-all duration-300 flex flex-col h-full relative overflow-hidden">
-          <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-            <span class="material-symbols-outlined text-6xl">payments</span>
+        <div class="glass-card p-5 group hover:border-primary-container/30
+                    transition-all duration-300 flex flex-col h-full">
+          <div class="p-2 w-fit bg-primary-container/10 border border-primary-container/20 rounded-lg mb-3">
+            <span class="material-symbols-outlined text-primary-container text-lg">translate</span>
           </div>
-          <div class="flex items-start justify-between mb-6">
-            <div class="p-3 bg-primary-container/10 border border-primary-container/20 rounded-lg">
-              <span class="material-symbols-outlined text-primary-container">translate</span>
-            </div>
-          </div>
-          <h3 class="font-headline-md text-headline-md text-white mb-4
+          <h3 class="text-white text-sm font-bold font-['Space_Grotesk'] mb-1
                      group-hover:text-primary-container transition-colors">
-            Currency to Words (VND / USD)
+            Currency to Words
           </h3>
-          <p class="text-zinc-400 mb-8 flex-grow">
+          <p class="text-zinc-500 text-xs mb-4 flex-grow">
             Chuyển đổi số tiền thành chữ
           </p>
-          <div class="flex flex-wrap gap-2 mb-8">
-            <span class="px-2 py-1 bg-white/5 border border-white/10 rounded text-[10px] font-code-sm text-zinc-400">HTML</span>
-            <span class="px-2 py-1 bg-white/5 border border-white/10 rounded text-[10px] font-code-sm text-zinc-400">TAILWIND CSS</span>
-            <span class="px-2 py-1 bg-white/5 border border-white/10 rounded text-[10px] font-code-sm text-zinc-400">JAVASCRIPT</span>
-          </div>
           <a href="vnd.html"
-             class="w-full py-4 bg-primary-container text-on-primary-fixed
-                    font-status-label text-status-label uppercase tracking-widest
+             class="w-full py-2 bg-primary-container text-on-primary-fixed
+                    font-status-label text-[10px] uppercase tracking-widest
                     hover:brightness-110 active:scale-[0.98] transition-all
-                    flex items-center justify-center gap-2 no-underline">
-            OPEN <span class="material-symbols-outlined text-sm">arrow_outward</span>
+                    flex items-center justify-center gap-1 no-underline">
+            OPEN <span class="material-symbols-outlined text-xs">arrow_outward</span>
           </a>
         </div>
 
         <!-- Card: PSD Viewer -->
-        <div class="glass-card p-8 group hover:border-primary-container/30
-                    transition-all duration-300 flex flex-col h-full relative overflow-hidden">
-          <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-            <span class="material-symbols-outlined text-6xl">layers</span>
+        <div class="glass-card p-5 group hover:border-primary-container/30
+                    transition-all duration-300 flex flex-col h-full">
+          <div class="p-2 w-fit bg-primary-container/10 border border-primary-container/20 rounded-lg mb-3">
+            <span class="material-symbols-outlined text-primary-container text-lg">layers</span>
           </div>
-          <div class="flex items-start justify-between mb-6">
-            <div class="p-3 bg-primary-container/10 border border-primary-container/20 rounded-lg">
-              <span class="material-symbols-outlined text-primary-container">layers</span>
-            </div>
-          </div>
-          <h3 class="font-headline-md text-headline-md text-white mb-4
+          <h3 class="text-white text-sm font-bold font-['Space_Grotesk'] mb-1
                      group-hover:text-primary-container transition-colors">
             PSD Viewer
           </h3>
-          <p class="text-zinc-400 mb-8 flex-grow">
-            Xem file Photoshop (.psd/.psb) ngay trên trình duyệt — layer, metadata, font
+          <p class="text-zinc-500 text-xs mb-4 flex-grow">
+            Xem file Photoshop ngay trên trình duyệt
           </p>
-          <div class="flex flex-wrap gap-2 mb-8">
-            <span class="px-2 py-1 bg-white/5 border border-white/10 rounded text-[10px] font-code-sm text-zinc-400">HTML</span>
-            <span class="px-2 py-1 bg-white/5 border border-white/10 rounded text-[10px] font-code-sm text-zinc-400">JAVASCRIPT</span>
-            <span class="px-2 py-1 bg-white/5 border border-white/10 rounded text-[10px] font-code-sm text-zinc-400">AG-PSD</span>
-          </div>
           <a href="PSD.html"
-             class="w-full py-4 bg-primary-container text-on-primary-fixed
-                    font-status-label text-status-label uppercase tracking-widest
+             class="w-full py-2 bg-primary-container text-on-primary-fixed
+                    font-status-label text-[10px] uppercase tracking-widest
                     hover:brightness-110 active:scale-[0.98] transition-all
-                    flex items-center justify-center gap-2 no-underline">
-            OPEN <span class="material-symbols-outlined text-sm">arrow_outward</span>
+                    flex items-center justify-center gap-1 no-underline">
+            OPEN <span class="material-symbols-outlined text-xs">arrow_outward</span>
           </a>
         </div>
 
